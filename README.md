@@ -1,11 +1,11 @@
 anguage Translator
 
-A simple web app that translates basic words and sentences between English and Arabic.
+A simple web application that translates basic words between English and Arabic.
 
 Features
-- Translate English to Arabic and vice versa
-- Supports basic sentences
-- Categorized vocabulary (Pronouns, Verbs, Nouns, etc.)
+- Translation from English to Arabic and vice versa
+- Supports basic words
+- Categorized vocabulary (pronouns, verbs, nouns, etc.)
 
 Tools Used
 - Python
