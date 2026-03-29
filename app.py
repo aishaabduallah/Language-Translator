@@ -3,54 +3,60 @@ import pandas as pd
 
 st.title("Language Translator")
 
-# تحميل البيانات (مع تحديث تلقائي)
+# تحميل البيانات مع حماية من الأخطاء
 @st.cache_data
 def load_data():
-    return pd.read_csv("words.csv")
+    try:
+        df = pd.read_csv("words.csv")
+        return df
+    except Exception as e:
+        st.error(f"Error loading file: {e}")
+        return pd.DataFrame()
 
 df = load_data()
 
-# تنظيف البيانات مرة وحدة
-df['English'] = df['English'].astype(str).str.strip().str.lower()
-df['Arabic'] = df['Arabic'].astype(str).str.strip()
+# تأكد أن البيانات موجودة
+if not df.empty:
 
-# اختيار الاتجاه
-option = st.radio(
-    "Choose translation direction:",
-    ("English → Arabic", "Arabic → English")
-)
+    df['English'] = df['English'].astype(str).str.strip().str.lower()
+    df['Arabic'] = df['Arabic'].astype(str).str.strip()
 
-# إدخال المستخدم
-user_input = st.text_input("Enter a word:")
+    option = st.radio(
+        "Choose translation direction:",
+        ("English → Arabic", "Arabic → English")
+    )
 
-# زر الترجمة
-if st.button("Translate"):
+    user_input = st.text_input("Enter a word:")
 
-    if user_input.strip() == "":
-        st.warning("Please enter a word")
-    else:
+    if st.button("Translate"):
 
-        # تنظيف الإدخال
-        clean_input = user_input.strip().lower()
-
-        if option == "English → Arabic":
-            result = df[df['English'] == clean_input]
-
-            if not result.empty:
-                st.success(result['Arabic'].values[0])
-            else:
-                st.error("Word not found")
-
+        if user_input.strip() == "":
+            st.warning("Please enter a word")
         else:
-            clean_input = user_input.strip()
-            result = df[df['Arabic'] == clean_input]
 
-            if not result.empty:
-                st.success(result['English'].values[0])
+            clean_input = user_input.strip().lower()
+
+            if option == "English → Arabic":
+                result = df[df['English'] == clean_input]
+
+                if not result.empty:
+                    st.success(result['Arabic'].values[0])
+                else:
+                    st.error("Word not found")
+
             else:
-                st.error("Word not found")
+                clean_input = user_input.strip()
+                result = df[df['Arabic'] == clean_input]
 
-# زر تحديث (حل إضافي)
+                if not result.empty:
+                    st.success(result['English'].values[0])
+                else:
+                    st.error("Word not found")
+
+else:
+    st.error("Data not loaded. Check words.csv file.")
+
+# زر تحديث
 if st.button(" Refresh Data"):
     st.cache_data.clear()
     st.rerun()
